@@ -110,6 +110,23 @@ module OsslRsa
       @rsa.verify(digest, sign, value)
     end
 
+    # save file key.
+    # filename is [private.xxx(pem or der)], [public.xxx(pem or der)]
+    # @param [String] dir_path save dir path. absolute.
+    # @param [integer] mode pem or der.
+    # @param [OpenSSL::Cipher] cipher cipher instance.
+    # @param [String] pass password
+    # @param [boolean] add_now add now date string flag.
+    # @return [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    def to_file(dir_path, mode, cipher=nil, pass=nil, add_now=false)
+
+      save_key_pair = key_pair(mode, cipher, pass)
+
+      # save file.
+      file_path_pair = OsslRsa::FileOp.save(dir_path, save_key_pair, mode, add_now)
+      file_path_pair
+    end
+
     # private check.
     # @return [boolean] OpsnSSL::PKey::RSA.private?
     def private?
@@ -124,6 +141,9 @@ module OsslRsa
 
     # get private and public key.
     # private key set self OpenSSL::PKey::RSA instance.
+    # @param [integer] mode pem or der.
+    # @param [OpenSSL::Cipher] cipher cipher instance.
+    # @param [String] pass password
     # @return [Hash] key pair hash. xx[:private] = private_key, xx[:public] = public_key
     def key_pair(mode, cipher=nil, pass=nil)
 
