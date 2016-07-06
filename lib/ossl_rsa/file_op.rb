@@ -24,22 +24,35 @@ module OsslRsa
     def self.save(dir_path, key_pair, mode, add_now=false)
 
       file_path_pair = create_file_path(dir_path, mode, add_now)
+
+      # save file.
+      save_file(key_pair, file_path_pair, mode)
+    end
+
+    # save file private and public key.
+    # @param [Hash] key_pair. private and public key pair.
+    # @param [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    # @param [integer] mode pem or der.
+    # @return [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    def self.save_file(key_pair, file_path_pair, mode)
+
+      save_path_pair = file_path_pair
       write_mode = get_write_mode(mode)
 
       # save file.
       unless key_pair[:private].nil?
-        write(file_path_pair[:private], write_mode, key_pair[:private])
+        write(save_path_pair[:private], write_mode, key_pair[:private])
       else
-        file_path_pair[:private] = nil
+        save_path_pair[:private] = nil
       end
 
       unless key_pair[:public].nil?
-        write(file_path_pair[:public], write_mode, key_pair[:public])
+        write(save_path_pair[:public], write_mode, key_pair[:public])
       else
-        file_path_pair[:public] = nil
+        save_path_pair[:public] = nil
       end
 
-      file_path_pair
+      save_path_pair
     end
 
     # create save file path.

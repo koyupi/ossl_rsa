@@ -8,6 +8,8 @@ describe OsslRsa::Rsa do
   let(:sign_value) { "b2zRCpulqpRwamjvOpN4j4VJVIfQHuoeIo86/rk2edAw1Xghjy5dTch/bbE8\naIUhxGDDKKTV+WBL9DUROTQ1GXE39I5P3UbW8nw5I3qro0U8uHm8WU0pTGYe\nyLyUC9KE3KSLebJtADmA1WXM/2Qen4u72R/EQEln3KvHUQGbBzAahyowJJj3\nmQ0i75nuck9LdSts1vkGLWd5V79faNm/E5MA7QjsCpRa7RID5bl2rOtpT88n\nJpw2FdIl3Tj7Nt3S0bwDqzwMSuiHDNMSfZknB1nOCO3Z4k1mAbu2KHaj4p49\nl0RkNbDNKkMGoIbx5Sh5qNvZwCSDzmuiTbHVaFK9og==" }
   let(:value) { "rsa encrypt value" }
   let(:dir_path) { 'C:\GitHub' }
+  let(:pem_file_path_pair) { { private: 'C:\GitHub\private.pem', public: 'C:\GitHub\public.pem'} }
+  let(:der_file_path_pair) { { private: 'C:\GitHub\private.der', public: 'C:\GitHub\public.der'} }
 
   it 'pem test' do
     rsa = OsslRsa::Rsa.new({size: 2048})
@@ -138,6 +140,40 @@ describe OsslRsa::Rsa do
     rsa = OsslRsa::Rsa.new({size: 2048})
     key_pair = rsa.key_pair(OsslRsa::DER)
     file_path_pair = rsa.to_file(dir_path, OsslRsa::DER)
+    expect(File.exist?(file_path_pair[:private])).to be_truthy
+    expect(File.exist?(file_path_pair[:public])).to be_truthy
+
+    private_file = File.open(file_path_pair[:private], "rb")
+    expect(private_file.read).to eq key_pair[:private]
+    private_file.close
+    public_file = File.open(file_path_pair[:public], "rb")
+    expect(public_file.read).to eq key_pair[:public]
+    public_file.close
+
+    File.delete(file_path_pair[:private])
+    File.delete(file_path_pair[:public])
+  end
+
+  it 'pem specify file write test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    key_pair = rsa.key_pair(OsslRsa::PEM)
+    file_path_pair = rsa.to_specify_file(pem_file_path_pair, OsslRsa::PEM)
+    expect(File.exist?(file_path_pair[:private])).to be_truthy
+    expect(File.exist?(file_path_pair[:public])).to be_truthy
+
+    private_contesnts = File.read(file_path_pair[:private])
+    expect(private_contesnts).to eq key_pair[:private]
+    public_contesnts = File.read(file_path_pair[:public])
+    expect(public_contesnts).to eq key_pair[:public]
+
+    File.delete(file_path_pair[:private])
+    File.delete(file_path_pair[:public])
+  end
+
+  it 'der specify file write test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    key_pair = rsa.key_pair(OsslRsa::DER)
+    file_path_pair = rsa.to_specify_file(der_file_path_pair, OsslRsa::DER)
     expect(File.exist?(file_path_pair[:private])).to be_truthy
     expect(File.exist?(file_path_pair[:public])).to be_truthy
 

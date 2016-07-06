@@ -123,8 +123,23 @@ module OsslRsa
       save_key_pair = key_pair(mode, cipher, pass)
 
       # save file.
-      file_path_pair = OsslRsa::FileOp.save(dir_path, save_key_pair, mode, add_now)
-      file_path_pair
+      save_path_pair = OsslRsa::FileOp.save(dir_path, save_key_pair, mode, add_now)
+      save_path_pair
+    end
+    # save file key.
+    # filename is [private.xxx(pem or der)], [public.xxx(pem or der)]
+    # @param [Hash] file_path_pair save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    # @param [integer] mode pem or der.
+    # @param [OpenSSL::Cipher] cipher cipher instance.
+    # @param [String] pass password
+    # @return [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    def to_specify_file(file_path_pair, mode, cipher=nil, pass=nil)
+
+      save_key_pair = key_pair(mode, cipher, pass)
+      
+      # save file.
+      save_path_pair = OsslRsa::FileOp.save_file(save_key_pair, file_path_pair, mode)
+      save_path_pair
     end
 
     # private check.
