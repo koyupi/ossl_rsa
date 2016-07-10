@@ -1,3 +1,4 @@
+require "ossl_rsa/generator"
 require "openssl"
 require "base64"
 require "securerandom"
@@ -16,25 +17,8 @@ module OsslRsa
     # @param [Hash] options generate options.
     def initialize(options={})
 
-      # if size and private exist, raise error.
-      if (!options[:size].nil? && !options[:obj].nil?)
-        raise OpenSSL::PKey::RSAError "size and obj is nil."
-      end
-
-      # if exist size, generate use size, cipher.
-      unless options[:size].nil?
-        @rsa = generate_rsa_by_size(options[:size])
-      end
-
-      # if exist obj, generate use obj, pass.
-      unless options[:obj].nil?
-        @rsa = generate_rsa_by_key(options[:obj], options[:pass])
-      end
-
-      # raise Error
-      if @rsa.nil?
-        raise OpenSSL::PKey::RSAError "fail create rsa instance."
-      end
+      # generate rsa instance.
+      @rsa = OsslRsa::Generator.generate(options)
     end
 
     # encrypt RSA. use public_key.
@@ -168,29 +152,17 @@ module OsslRsa
       { private: private_key, public: public_key }
     end
 
+    # get private and public key text.
+    # @return [Hash] key pair hash. xx[:private] = private_key, xx[:public] = public_key
+    def text_pair
+
+      private_key = @rsa.to_text if @rsa.private?
+      public_key = @rsa.public_key.to_text if @rsa.public?
+
+      { private: private_key, public: public_key }
+    end
+
     private
-
-    # generate rsa.
-    # @param [integer] size key size.
-    # @return [OpenSSL::PKey::RSA] rsa instance.
-    def generate_rsa_by_size(size)
-
-      # add seed.
-      OpenSSL::Random.seed(SecureRandom.hex(8))
-      # generate rsa instance.
-      rsa = OpenSSL::PKey::RSA.new(size)
-      rsa
-    end
-
-    # generate rsa.
-    # @param [String] pem / der.
-    # @param [String] pass password
-    # @return [OpenSSL::PKey::RSA] rsa instance.
-    def generate_rsa_by_key(obj, pass=nil)
-
-      rsa = OpenSSL::PKey::RSA.new(obj, pass)
-      rsa
-    end
 
     # get private key.
     # @param [integer] mode pem or der.

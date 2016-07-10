@@ -97,6 +97,24 @@ describe OsslRsa::Rsa do
     expect(key_pair).to be_truthy
   end
 
+  it 'text test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    text_pair = rsa.text_pair
+    # puts text_pair[:private]
+    # puts text_pair[:public]
+    expect(text_pair[:private]).to be_truthy
+    expect(text_pair[:public]).to be_truthy
+  end
+
+  it 'text public only test' do
+    rsa = OsslRsa::Rsa.new({obj: pem_public, pass: "ossl_rsa"})
+    text_pair = rsa.text_pair
+    # puts text_pair[:private]
+    # puts text_pair[:public]
+    expect(text_pair[:private]).to be_falsey
+    expect(text_pair[:public]).to be_truthy
+  end
+
   it 'public only decrypt test' do
     rsa = OsslRsa::Rsa.new({obj: pem_public, pass: "ossl_rsa"})
     enc_value = rsa.decrypt(value)
