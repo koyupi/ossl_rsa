@@ -162,6 +162,12 @@ module OsslRsa
       { private: private_key, public: public_key }
     end
 
+    # get rsa instance.
+    # @return [OpenSSL::PKey::RSA] rsa instance.
+    def rsa
+      @rsa
+    end
+
     private
 
     # get private key.

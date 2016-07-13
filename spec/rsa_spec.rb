@@ -205,4 +205,11 @@ describe OsslRsa::Rsa do
     File.delete(file_path_pair[:private])
     File.delete(file_path_pair[:public])
   end
+
+  it 'rsa test' do
+    rsa = OsslRsa::Rsa.new({obj: pem_public, pass: "ossl_rsa"})
+    actual_ras = rsa.rsa
+    # puts actual_ras.to_pem
+    expect(actual_ras).to be_truthy
+  end
 end
