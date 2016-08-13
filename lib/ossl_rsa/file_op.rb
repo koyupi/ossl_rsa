@@ -17,7 +17,7 @@ module OsslRsa
 
     # save file private and public key.
     # @param [String] dir_path save dir path. absolute.
-    # @param [Hash] key_pair. private and public key pair.
+    # @param [Hash] key_pair private and public key pair.
     # @param [integer] mode pem or der.
     # @param [boolean] add_now add now date string flag.
     # @return [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
@@ -29,9 +29,21 @@ module OsslRsa
       save_file(key_pair, file_path_pair, mode)
     end
 
+    # save one file.
+    # @param [String] file_path save file path.
+    # @param [Hash] key_pair. private and public key pair.
+    # @param [integer] mode pem or der.
+    def self.save_one_file(file_path, key_pair, mode)
+
+      write_mode = get_write_mode(mode)
+
+      # save file.
+      puts(file_path, write_mode, key_pair)
+    end
+
     # save file private and public key.
     # @param [Hash] key_pair. private and public key pair.
-    # @param [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
+    # @param [Hash] file_path_pair save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
     # @param [integer] mode pem or der.
     # @return [Hash] save file path pair. xxx[:private] = private file path, xxx[:public] = public file path.
     def self.save_file(key_pair, file_path_pair, mode)
@@ -94,7 +106,7 @@ module OsslRsa
     end
 
     # get file write mode.
-    # @param [String] mode pem or der
+    # @param [integer] mode pem or der
     # @return [String] write mode.
     def self.get_write_mode(mode)
 
@@ -102,6 +114,18 @@ module OsslRsa
       return "w" if mode == PEM
 
       "wb"
+    end
+
+    # write to file.
+    # @param [String] file_path save file path.
+    # @param [String] write_mode file write mode.
+    # @param [Hash] key_pair. private and public key pair.
+    def self.puts(file_path, write_mode, key_pair)
+
+      # write to file.
+      File.open(file_path, write_mode) do |file|
+        file.puts(key_pair[:private], key_pair[:public])
+      end
     end
 
     # write to file.

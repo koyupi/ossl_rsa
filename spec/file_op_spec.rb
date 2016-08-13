@@ -4,6 +4,8 @@ require 'spec_helper'
 describe OsslRsa::FileOp do
 
   let(:dir_path) { 'C:\GitHub' }
+  let(:pem_file_path) { 'C:\GitHub\one_file.pem' }
+  let(:der_file_path) { 'C:\GitHub\one_file.der' }
   let(:pem_file_path_pair) { { private: 'C:\GitHub\private.pem', public: 'C:\GitHub\public.pem'} }
   let(:der_file_path_pair) { { private: 'C:\GitHub\private.der', public: 'C:\GitHub\public.der'} }
 
@@ -39,6 +41,24 @@ describe OsslRsa::FileOp do
 
     File.delete(file_path_pair[:private])
     File.delete(file_path_pair[:public])
+  end
+
+  it 'write one file pem test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    key_pair = rsa.key_pair(OsslRsa::PEM)
+    OsslRsa::FileOp.save_one_file(pem_file_path, key_pair, OsslRsa::PEM)
+    expect(File.exist?(pem_file_path)). to be_truthy
+
+    File.delete(pem_file_path)
+  end
+
+  it 'write one file der test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    key_pair = rsa.key_pair(OsslRsa::DER)
+    OsslRsa::FileOp.save_one_file(der_file_path, key_pair, OsslRsa::DER)
+    expect(File.exist?(der_file_path)). to be_truthy
+
+    File.delete(der_file_path)
   end
 
   it 'write specify file pem test' do

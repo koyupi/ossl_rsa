@@ -94,6 +94,19 @@ module OsslRsa
       @rsa.verify(digest, sign, value)
     end
 
+    # save one file key.
+    # @param [String] file_path save file path. absolute.
+    # @param [integer] mode pem or der.
+    # @param [OpenSSL::Cipher] cipher cipher instance.
+    # @param [String] pass password
+    def to_one_file(file_path, mode, cipher=nil, pass=nil)
+
+      save_key_pair = key_pair(mode, cipher, pass)
+
+      # save file.
+      OsslRsa::FileOp.save_one_file(file_path, save_key_pair, mode)
+    end
+
     # save file key.
     # filename is [private.xxx(pem or der)], [public.xxx(pem or der)]
     # @param [String] dir_path save dir path. absolute.

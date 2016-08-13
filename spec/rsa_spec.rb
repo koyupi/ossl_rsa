@@ -7,6 +7,8 @@ describe OsslRsa::Rsa do
   let(:pem_public) { "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAolzkExP37u5c43Lr5mxM\nxP4bMBhwSfGytAIjbTJRtWnRhlIbDwPoKHCDq/8HtSVTkjv9t/eLod7RdWoAqsCA\naMY7wgrbgH7jl78kdY4OuZZjJssMk7xAXkVWA0FA3KElil7f9ye1CvrayT3Uzpp+\ncJEXXi1+I6Tkz0v/6zG+WV6JB0o9JWrNOGdbbjy9TeGE21u1QMW4gYD7FpkJ6PFa\nVC+14djol8cEHAVSZTGnLXIS5jO1MQ/G1qxPkvX+HBpjzp40/AW1QsBVbTkwLyYd\n6J2DMlOAzwxHQFcY2VXFZxMwQ1tyCG0EMINPAxSOoZ6E66xehJwfam4vUS10xq3T\nOQIDAQAB\n-----END PUBLIC KEY-----" }
   let(:sign_value) { "b2zRCpulqpRwamjvOpN4j4VJVIfQHuoeIo86/rk2edAw1Xghjy5dTch/bbE8\naIUhxGDDKKTV+WBL9DUROTQ1GXE39I5P3UbW8nw5I3qro0U8uHm8WU0pTGYe\nyLyUC9KE3KSLebJtADmA1WXM/2Qen4u72R/EQEln3KvHUQGbBzAahyowJJj3\nmQ0i75nuck9LdSts1vkGLWd5V79faNm/E5MA7QjsCpRa7RID5bl2rOtpT88n\nJpw2FdIl3Tj7Nt3S0bwDqzwMSuiHDNMSfZknB1nOCO3Z4k1mAbu2KHaj4p49\nl0RkNbDNKkMGoIbx5Sh5qNvZwCSDzmuiTbHVaFK9og==" }
   let(:value) { "rsa encrypt value" }
+  let(:pem_file_path) { 'C:\GitHub\one_file.pem' }
+  let(:der_file_path) { 'C:\GitHub\one_file.der' }
   let(:dir_path) { 'C:\GitHub' }
   let(:pem_file_path_pair) { { private: 'C:\GitHub\private.pem', public: 'C:\GitHub\public.pem'} }
   let(:der_file_path_pair) { { private: 'C:\GitHub\private.der', public: 'C:\GitHub\public.der'} }
@@ -136,6 +138,22 @@ describe OsslRsa::Rsa do
   it 'verify test true' do
     rsa = OsslRsa::Rsa.new({obj: pem_private, pass: "ossl_rsa"})
     expect(rsa.verify("sha256", sign_value, value)).to be_truthy
+  end
+
+  it 'pem one file write test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    rsa.to_one_file(pem_file_path, OsslRsa::PEM)
+    expect(File.exist?(pem_file_path)). to be_truthy
+
+    File.delete(pem_file_path)
+  end
+
+  it 'der one file write test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    rsa.to_one_file(der_file_path, OsslRsa::DER)
+    expect(File.exist?(der_file_path)). to be_truthy
+
+    File.delete(der_file_path)
   end
 
   it 'pem file write test' do
