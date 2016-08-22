@@ -230,4 +230,16 @@ describe OsslRsa::Rsa do
     # puts actual_ras.to_pem
     expect(actual_ras).to be_truthy
   end
+
+  it 'RFC4648 test' do
+    rsa = OsslRsa::Rsa.new({size: 2048})
+    rsa.set_rfc(OsslRsa::RFC4648)
+
+    enc_value = rsa.encrypt(value)
+    # puts enc_value
+    expect(enc_value).not_to eq value
+    dec_value = rsa.decrypt(enc_value)
+    # puts dec_value
+    expect(dec_value).to eq value
+  end
 end

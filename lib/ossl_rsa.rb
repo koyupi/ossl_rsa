@@ -10,4 +10,9 @@ module OsslRsa
   PEM = 0
   # der mode.
   DER = 1
+
+  # RFC2045
+  RFC2045 = 0
+  # RFC4648
+  RFC4648 = 1
 end

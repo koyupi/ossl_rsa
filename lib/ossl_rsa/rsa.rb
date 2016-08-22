@@ -34,7 +34,7 @@ module OsslRsa
       encrypt_value = @rsa.public_encrypt(value, mode)
       # base64 encode.
       if base64_encode
-        encrypt_value = Base64.encode64(encrypt_value)
+        encrypt_value = encode_base64(encrypt_value)
       end
       encrypt_value
     end
@@ -51,7 +51,7 @@ module OsslRsa
 
       # base64 decode
       if base64_decode
-        value = Base64.decode64(value)
+        value = decode_base64(value)
       end
 
       decrypt_value = @rsa.private_decrypt(value, mode)
@@ -71,7 +71,7 @@ module OsslRsa
       sign_value = @rsa.sign(digest, value)
       # base64 encode.
       if base64_encode
-        sign_value = Base64.encode64(sign_value)
+        sign_value = encode_base64(sign_value)
       end
       sign_value
     end
@@ -89,7 +89,7 @@ module OsslRsa
 
       # base64 decode.
       if base64_decode
-        sign = Base64.decode64(sign)
+        sign = decode_base64(sign)
       end
       @rsa.verify(digest, sign, value)
     end
@@ -175,6 +175,12 @@ module OsslRsa
       { private: private_key, public: public_key }
     end
 
+    # set base64 rfc.
+    # @param [integer] rfc rfc
+    def set_rfc(rfc)
+      @rfc = rfc
+    end
+
     # get rsa instance.
     # @return [OpenSSL::PKey::RSA] rsa instance.
     def rsa
@@ -220,7 +226,7 @@ module OsslRsa
     def convert_key(mode, key, cipher, pass)
       
       cv_key = nil
-      # convert public key.
+      # convert key.
       if mode == PEM
         cv_key = key.to_pem(cipher, pass)
       elsif mode == DER
@@ -228,6 +234,34 @@ module OsslRsa
       end
 
       cv_key
+    end
+
+    # encode base64.
+    # @param [String] value target value.
+    # @return [String] base64 encode value.
+    def encode_base64(value)
+
+      if @rfc == RFC2045
+        Base64.encode64(value)
+      elsif @rfc == RFC4648
+        Base64.strict_encode64(value)
+      else
+        Base64.encode64(value)
+      end
+    end
+
+    # decode base64.
+    # @param [String] value target value.
+    # @return [String] base64 decode value.
+    def decode_base64(value)
+
+      if @rfc == RFC2045
+        Base64.decode64(value)
+      elsif @rfc == RFC4648
+        Base64.strict_decode64(value)
+      else
+        Base64.decode64(value)
+      end
     end
   end
 end
