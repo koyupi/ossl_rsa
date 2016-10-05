@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{This gem provide RSA encryption and sign, verify.}
   spec.description   = %q{This gem provide RSA encryption and sign, verify by openssl lib.}
-  spec.homepage      = "https://github.com/h-shigemoto/ossl_rsa"
+  spec.homepage      = "https://github.com/koyupi/ossl_rsa"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
